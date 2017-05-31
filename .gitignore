@@ -1,3 +1,5 @@
 *.tif
 *.png
 *.joblib
+*.hdf5
+*.pyc
