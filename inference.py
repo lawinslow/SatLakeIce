@@ -5,20 +5,21 @@
 import sys
 import os
 import joblib
+import numpy as np
 from keras.models import load_model
+from geotiff_convert import convert_geotifs
 
 def convert(path):
 
     if os.path.isfile(path):
         # user sent a path to a file
-        pass
+        data = convert_geotifs([path])
     elif os.path.isdir(path):
-        # user sent directory of gdals
-        pass
-    else:
-        return None
-
-    pass
+        # user sent directory of geotifs
+        paths = [path + "/" + p for p in os.listdir(path)]
+        data = convert_geotifs(paths)
+    
+    return data
 
 def run(path = None):
     """
@@ -28,7 +29,7 @@ def run(path = None):
     # find the trained model path and load it
     trained_model_path = "./trained/" + os.listdir("./trained")[0]
 
-    # load the X_max value so we can rescale properly
+    # load the X_max value so we can normalize properly
     X_max = joblib.load("./data/X_max.joblib")
 
     model = load_model(trained_model_path)
@@ -38,9 +39,11 @@ def run(path = None):
 
         data /= X_max
 
-        predicted = model.predict(converted)
+        predicted = model.predict(data)
+        frozen = np.zeros_like(predicted, dtype = np.bool)
 
-        print(predicted)
+        frozen[predicted > 0.5] = True
+        print(frozen)
 
     else:
         test_summer_data = joblib.load("./data/test_summer_data.joblib")

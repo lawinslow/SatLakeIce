@@ -34,7 +34,7 @@ X_max = np.max(X)
 
 # in order to get a fair validation,
 # dump the max value from the training data
-joblib.dump(X_max, ".data/X_max.joblib")
+joblib.dump(X_max, "./data/X_max.joblib")
 
 # split off a dev set that we won't train on,
 # as a validation set
@@ -46,7 +46,7 @@ for train_indx, dev_indx in ss.split(X):
     y_dev = y[dev_indx]
 
 # here we do some tricks to get more training data,
-# scaling, shearing, rotating, flipping
+# scaling, shearing, rotating, flipping, etc.
 # (which should still look like 'lakes')
 train_datagen = ImageDataGenerator(
     rescale=1./X_max,
@@ -95,7 +95,7 @@ model.fit_generator(train_datagen.flow(X_train, y_train, batch_size = batch_size
 # delete all but the last saved checkpoint, it has the best quality model      
 files = [os.path.join("./trained", f) for f in os.listdir("./trained")] # add path to each file
 files.sort(key = lambda x: os.path.getmtime(x))
-for f in files[1:]:
+for f in files[-1:]:
     os.remove(f)
 
 
