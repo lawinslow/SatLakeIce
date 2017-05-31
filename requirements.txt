@@ -1,0 +1,7 @@
+joblib
+tensorflow
+keras
+numpy
+sklearn
+gdal
+scipy
